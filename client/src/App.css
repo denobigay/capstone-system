@@ -251,6 +251,7 @@ html {
   position: relative;
 }
 
+.nav-dropdown > button.nav-link,
 .nav-dropdown .dropdown-toggle {
   width: 100%;
   text-align: left;
@@ -266,10 +267,12 @@ html {
   cursor: pointer;
 }
 
+.nav-dropdown > button.nav-link:hover,
 .nav-dropdown .dropdown-toggle:hover {
   background-color: rgba(59, 130, 246, 0.3);
 }
 
+.nav-dropdown > button.nav-link.active,
 .nav-dropdown .dropdown-toggle.active {
   background-color: rgba(59, 130, 246, 0.3);
 }

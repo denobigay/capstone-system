@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\CustomRequest;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 
 class CustomRequestsController extends Controller
 {
@@ -35,7 +36,7 @@ class CustomRequestsController extends Controller
             $customRequest = CustomRequest::create($data);
             return response()->json(['custom_request' => $customRequest], 201);
         } catch (\Exception $e) {
-            \Log::error('Error creating custom request: ' . $e->getMessage());
+            Log::error('Error creating custom request: ' . $e->getMessage());
             return response()->json(['error' => 'Failed to create custom request'], 500);
         }
     }

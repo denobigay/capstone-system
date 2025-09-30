@@ -328,23 +328,26 @@ export default function Inventory() {
     setIsSubmitting(true)
     
     try {
+      const payload = {
+         name: itemData.name,
+         category: itemData.category,
+         quantity: parseInt(itemData.quantity) || 1,
+         available: parseInt(itemData.available) || 1,
+         location: itemData.location,
+         description: itemData.description,
+         serial_number: itemData.serialNumber,
+         purchase_date: itemData.purchaseDate,
+         purchase_price: parseFloat(itemData.purchasePrice) || 0,
+         purchase_type: itemData.purchaseType || 'purchased',
+         added_by: itemData.addedBy || 'Admin User',
+         status: itemData.status || 'Available',
+         photo: itemData.photo
+       }
+
+
       const response = await apiFetch('/api/inventory', {
         method: 'POST',
-        body: JSON.stringify({
-           name: itemData.name,
-           category: itemData.category,
-           quantity: parseInt(itemData.quantity) || 1,
-           available: parseInt(itemData.available) || 1,
-           location: itemData.location,
-           description: itemData.description,
-           serial_number: itemData.serialNumber,
-           purchase_date: itemData.purchaseDate,
-           purchase_price: parseFloat(itemData.purchasePrice) || 0,
-           purchase_type: itemData.purchaseType || 'purchased',
-           added_by: itemData.addedBy || 'Admin User',
-           status: itemData.status || 'Available',
-           photo: itemData.photo
-         })
+        body: JSON.stringify(payload)
       })
 
       if (response.ok) {
@@ -660,7 +663,7 @@ export default function Inventory() {
                                     <div className="photo-display">
                                       {item.photo ? (
                                         <img 
-                                          src={item.photo}
+                                          src={item.photo.startsWith('http') ? item.photo : `http://localhost:8000/${item.photo}`}
                                           alt={item.name}
                                           style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '8px' }}
                                           onError={(e) => {
@@ -680,22 +683,21 @@ export default function Inventory() {
                                   <div className="qr-code-display">
                                     <label>QR CODE:</label>
                                     <div className="qr-image-container">
-                                      {item.serialNumber ? (
-                                        <img 
-                                          src={`https://api.qrserver.com/v1/create-qr-code/?size=120x120&data=${encodeURIComponent(item.serialNumber)}`}
-                                          alt="QR Code"
-                                          style={{ width: '100%', height: '100%', objectFit: 'contain' }}
-                                          onError={(e) => {
-                                            e.currentTarget.style.display = 'none'
-                                            e.currentTarget.nextElementSibling?.classList.remove('d-none')
-                                          }}
-                                        />
-                                      ) : (
-                                        <div className="qr-placeholder">
-                                          <i className="bi bi-qr-code" style={{ fontSize: '24px', color: '#cbd5e1' }}></i>
-                                          <span>No QR Code</span>
-                                        </div>
-                                      )}
+                                      {(() => {
+                                        // Generate QR code data - use serial number if available, otherwise use item details
+                                        const qrData = item.serialNumber || `ITEM-${item.id}-${item.name}-${item.category}-${item.location}`
+                                        return (
+                                          <img 
+                                            src={`https://api.qrserver.com/v1/create-qr-code/?size=120x120&data=${encodeURIComponent(qrData)}`}
+                                            alt="QR Code"
+                                            style={{ width: '100%', height: '100%', objectFit: 'contain' }}
+                                            onError={(e) => {
+                                              e.currentTarget.style.display = 'none'
+                                              e.currentTarget.nextElementSibling?.classList.remove('d-none')
+                                            }}
+                                          />
+                                        )
+                                      })()}
                                     </div>
                                   </div>
                                 </div>

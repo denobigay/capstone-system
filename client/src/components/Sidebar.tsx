@@ -74,7 +74,7 @@ export default function Sidebar({ currentUser }: SidebarProps) {
         {role === 'ADMIN' && (
           <div className="nav-dropdown" ref={dropdownRef}>
             <button 
-              className={`nav-link dropdown-toggle ${isManageDropdownOpen ? 'active' : ''}`}
+              className={`nav-link ${isManageDropdownOpen ? 'active' : ''}`}
               onClick={() => setIsManageDropdownOpen(!isManageDropdownOpen)}
             >
               <i className="bi bi-file-earmark-text"></i>

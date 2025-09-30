@@ -482,29 +482,27 @@ export default function InventoryFormModal({
                   backgroundColor: '#ffffff',
                   padding: '0.5rem'
                 }}>
-                  {newItem.serialNumber ? (
-                    <div style={{ width: '100%', height: '100%' }}>
-                      <img
-                        src={`https://api.qrserver.com/v1/create-qr-code/?size=120x120&data=${encodeURIComponent(newItem.serialNumber)}`}
-                        alt="QR Code"
-                        style={{
-                          width: '100%',
-                          height: '100%',
-                          objectFit: 'contain',
-                          borderRadius: '4px'
-                        }}
-                        onError={(e) => {
-                          console.error('QR image failed to load:', e)
-                        }}
-                      />
-                    </div>
-                  ) : (
-                    <div style={{ textAlign: 'center', color: '#6c757d' }}>
-                      <i className="bi bi-qr-code" style={{ fontSize: '1.5rem', marginBottom: '0.5rem' }}></i>
-                      <p style={{ margin: 0, fontSize: '0.7rem' }}>QR Code</p>
-                      <p style={{ margin: 0, fontSize: '0.7rem' }}>will appear</p>
-                    </div>
-                  )}
+                  {(() => {
+                    // Generate QR code data - use serial number if available, otherwise use item details
+                    const qrData = newItem.serialNumber || `ITEM-${Date.now()}-${newItem.name || 'New Item'}-${newItem.category || 'General'}-${newItem.location || 'Unknown'}`
+                    return (
+                      <div style={{ width: '100%', height: '100%' }}>
+                        <img
+                          src={`https://api.qrserver.com/v1/create-qr-code/?size=120x120&data=${encodeURIComponent(qrData)}`}
+                          alt="QR Code"
+                          style={{
+                            width: '100%',
+                            height: '100%',
+                            objectFit: 'contain',
+                            borderRadius: '4px'
+                          }}
+                          onError={(e) => {
+                            console.error('QR image failed to load:', e)
+                          }}
+                        />
+                      </div>
+                    )
+                  })()}
                 </div>
               </div>
 

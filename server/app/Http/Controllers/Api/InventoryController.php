@@ -35,10 +35,11 @@ class InventoryController extends Controller
             'purchase_price' => 'nullable|numeric|min:0',
             'purchase_type' => 'nullable|string|max:255',
             'added_by' => 'nullable|string|max:255',
-            'status' => 'nullable|string|max:255'
+            'status' => 'nullable|string|max:255',
+            'photo' => 'nullable|string'
         ]);
 
-        $item = InventoryItem::create([
+        $itemData = [
             'name' => $request->name,
             'category' => $request->category,
             'quantity' => $request->quantity,
@@ -51,9 +52,39 @@ class InventoryController extends Controller
             'purchase_type' => $request->purchase_type ?? 'purchased',
             'added_by' => $request->added_by ?? 'Admin User',
             'status' => $request->status ?? 'Available',
-            'photo' => $request->photo,
             'last_updated' => now()->toDateString()
-        ]);
+        ];
+
+        // Handle photo (base64 string from frontend)
+        if ($request->has('photo') && $request->photo) {
+            // Check if it's a base64 image
+            if (str_starts_with($request->photo, 'data:image/')) {
+                // Convert base64 to file
+                $imageData = $request->photo;
+                $imageData = str_replace('data:image/png;base64,', '', $imageData);
+                $imageData = str_replace('data:image/jpeg;base64,', '', $imageData);
+                $imageData = str_replace('data:image/jpg;base64,', '', $imageData);
+                $imageData = str_replace(' ', '+', $imageData);
+
+                $imageData = base64_decode($imageData);
+                $fileName = time() . '_inventory_photo.jpg';
+                $filePath = 'uploads/' . $fileName;
+
+                // Ensure uploads directory exists
+                if (!file_exists(public_path('uploads'))) {
+                    mkdir(public_path('uploads'), 0755, true);
+                }
+
+                // Save to uploads folder
+                file_put_contents(public_path($filePath), $imageData);
+                $itemData['photo'] = $filePath;
+            } else {
+                // Regular string (existing photo path)
+                $itemData['photo'] = $request->photo;
+            }
+        }
+
+        $item = InventoryItem::create($itemData);
 
         return response()->json($item, 201);
     }
