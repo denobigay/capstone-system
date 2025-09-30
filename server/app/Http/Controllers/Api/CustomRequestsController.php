@@ -8,6 +8,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 
+
 class CustomRequestsController extends Controller
 {
     public function index(): JsonResponse
